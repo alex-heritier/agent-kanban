@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>agent-kanban</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <h1>agent-kanban</h1>
+      <p>A starter frontend that works on both Electron and GitHub Pages.</p>
+
+      <section class="board" aria-label="Kanban columns preview">
+        <article class="column">
+          <h2>Todo</h2>
+          <ul>
+            <li>Set up project board</li>
+            <li>Add first task cards</li>
+          </ul>
+        </article>
+        <article class="column">
+          <h2>In Progress</h2>
+          <ul>
+            <li>Build drag and drop</li>
+          </ul>
+        </article>
+        <article class="column">
+          <h2>Done</h2>
+          <ul>
+            <li>Scaffold app</li>
+          </ul>
+        </article>
+      </section>
+
+      <p id="runtime" class="runtime">Loading runtime…</p>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
