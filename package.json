@@ -1,0 +1,13 @@
+{
+  "name": "agent-kanban",
+  "version": "0.1.0",
+  "description": "Basic Electron desktop app scaffold",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^31.0.2"
+  }
+}
