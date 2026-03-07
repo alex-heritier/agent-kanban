@@ -12,3 +12,7 @@ Basic Electron desktop app scaffold.
    ```bash
    npm start
    ```
+
+## Static docs preview
+
+The shared app page lives at `docs/index.html` and is used by both GitHub Pages and the Electron window.
