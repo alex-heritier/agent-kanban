@@ -16,3 +16,4 @@ Basic Electron desktop app scaffold.
 ## Static docs preview
 
 The shared app page lives at `docs/index.html` and is used by both GitHub Pages and the Electron window.
+A static copy of the Electron app screen is available at `docs/index.html` for GitHub Pages hosting.
