@@ -1,9 +1,14 @@
 # Docs
 
-This directory contains the shared app page used by both:
+`docs/index.html` hosts the TASKS.md Kanban board UI.
 
-- GitHub Pages static hosting (`docs/index.html`)
-- The Electron window (loaded from `src/main.js`)
-This directory contains a static version of the app UI for GitHub Pages.
+- In Electron, it uses `window.tasksApi` from preload to read/write `<repo>/TASKS.md`.
+- In static browser mode (e.g. GitHub Pages), it runs as read-only demo shell because filesystem APIs are unavailable.
 
-- `docs/index.html` mirrors `src/index.html` so the same screen can be viewed in a browser without Electron.
+Columns map directly to task statuses:
+
+- Todo (`todo`)
+- In Progress (`in_progress`)
+- Blocked (`blocked`)
+- Done (`done`)
+- Cancelled (`cancelled`)

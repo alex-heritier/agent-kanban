@@ -1,19 +1,23 @@
-# agent-kanban Electron scaffold
+# agent-kanban
 
-Basic Electron desktop app scaffold.
+Repo-native TASKS.md Kanban application.
+
+## What this implements
+
+- `TASKS.md` in repo root is the single source of truth for tasks.
+- `.kanban/TASKS.archive.md` is used for archived tasks.
+- Task operations are file-based and deterministic (no DB).
+- Electron IPC exposes TASKS operations that mirror MCP-style methods:
+  - `tasks_list`, `tasks_ready`, `tasks_get`, `tasks_create`, `tasks_update`
+  - `tasks_set_status`, `tasks_set_owner`, `tasks_add_note`, `tasks_cancel`, `tasks_find_by_file`
+  - `tasks lint/doctor/fix` style checks.
+- Kanban UI in `docs/index.html` renders statuses and supports drag/drop status changes.
 
 ## Getting started
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Run the app:
-   ```bash
-   npm start
-   ```
+```bash
+npm install
+npm start
+```
 
-## Static docs preview
-
-The shared app page lives at `docs/index.html` and is used by both GitHub Pages and the Electron window.
-A static copy of the Electron app screen is available at `docs/index.html` for GitHub Pages hosting.
+The Electron window loads `docs/index.html` and can read/write `TASKS.md` via preload IPC.
