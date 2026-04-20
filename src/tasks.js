@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const TASK_HEADING_RE = /^### (TASK-(\d+)) (.+)$/;
+const TASK_ONE_LINER_RE = /^- (TASK-(\d+)) (.+)$/;
 const METADATA_RE = /^- ([A-Za-z][A-Za-z ]*):\s*(.*)$/;
 const SECTION_RE = /^#### (Description|Acceptance Criteria|Next Action|Progress Notes|Agent Log)$/;
 const TS_RE = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
@@ -35,6 +36,12 @@ function splitLinesWithOffsets(text) {
   return { lines, offsets };
 }
 
+function isMinimalTask(task) {
+  const hasTimestamp = task.metadata.Created || task.metadata.Updated;
+  const hasSections = Object.keys(task.sections).length > 0;
+  return !hasTimestamp && !hasSections;
+}
+
 export function parseTasks(content) {
   const tasksHeader = /^## Tasks\s*$/m;
   const m = content.match(tasksHeader);
@@ -53,6 +60,23 @@ export function parseTasks(content) {
       i += 1;
       continue;
     }
+
+    const ol = lines[i].match(TASK_ONE_LINER_RE);
+    if (ol) {
+      taskBlocks.push({
+        id: ol[1],
+        idNumber: Number(ol[2]),
+        title: ol[3],
+        metadata: {},
+        sections: {},
+        raw: lines[i],
+        startOffset: offsets[i],
+        endOffset: offsets[i] + lines[i].length,
+      });
+      i += 1;
+      continue;
+    }
+
     const hm = lines[i].match(TASK_HEADING_RE);
     if (!hm) {
       i += 1;
@@ -61,7 +85,7 @@ export function parseTasks(content) {
     const startLine = i;
     let endLine = i;
     i += 1;
-    while (i < lines.length && !TASK_HEADING_RE.test(lines[i])) {
+    while (i < lines.length && !TASK_HEADING_RE.test(lines[i]) && !TASK_ONE_LINER_RE.test(lines[i])) {
       endLine = i;
       i += 1;
     }
@@ -129,6 +153,10 @@ export function parseTasks(content) {
 }
 
 function renderTask(task) {
+  if (isMinimalTask(task)) {
+    return `- ${task.id} ${task.title}`;
+  }
+
   const lines = [`### ${task.id} ${task.title}`, ''];
   const normalizedMeta = { ...task.metadata };
   if (!normalizedMeta.Priority) normalizedMeta.Priority = 'medium';
@@ -194,7 +222,8 @@ export function tasksGet(repoRoot, id) {
 
 function validateTask(task, allTasks) {
   const errs = [];
-  if (!task.metadata.Status) errs.push(`${task.id}: missing Status`);
+  const hasAnyMeta = Object.keys(task.metadata).length > 0;
+  if (hasAnyMeta && !task.metadata.Status) errs.push(`${task.id}: missing Status`);
   if (task.metadata.Status && !ALLOWED_STATUS.has(task.metadata.Status)) errs.push(`${task.id}: invalid Status ${task.metadata.Status}`);
   if (task.metadata.Priority && !['high', 'medium', 'low'].includes(task.metadata.Priority)) errs.push(`${task.id}: invalid Priority ${task.metadata.Priority}`);
   if (task.metadata.Created && !TS_RE.test(task.metadata.Created)) errs.push(`${task.id}: invalid Created timestamp`);
